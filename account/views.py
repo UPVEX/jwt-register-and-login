@@ -12,4 +12,5 @@ class RegisterViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
 class LoginViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = User.objects.all()
     serializer_class = LoginSerializer
