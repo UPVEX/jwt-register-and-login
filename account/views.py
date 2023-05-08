@@ -6,10 +6,14 @@ from django.contrib.auth import authenticate
 from .models import User
 
 
+# ..........register.........
+
 class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
+
+# ..........login............
 
 class LoginViewSet(viewsets.ViewSet):
     serializer_class = LoginSerializer
@@ -39,3 +43,20 @@ class LoginViewSet(viewsets.ViewSet):
             'refresh_token': str(refresh),
         }, status=status.HTTP_200_OK)
 
+
+# ..........log out.........
+
+
+class LogoutViewSet(viewsets.ViewSet):
+    def create(self, request):
+        refresh_token = request.data.get('refresh_token')
+
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({'success': 'User successfully logged out.'})
+            except Exception as e:
+                return Response({'error': str(e)}, status=400)
+        else:
+            return Response({'error': 'Invalid request.'}, status=400)
